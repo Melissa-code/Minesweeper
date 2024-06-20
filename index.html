@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Le Démineur (Minesweeper) est un jeu de réflexion dont le but est de localiser des mines cachées dans une grille représentant un champ de mines avec pour seule indication le nombre de mines dans les zones adjacentes. La règle du jeu est simple : le joueur sélectionne une case sur la grille, et cette case révèle un nombre qui indique le nombre de mines se trouvant dans les cases adjacentes. En utilisant ces informations, le joueur doit déduire l’emplacement des mines et les marquer avec des drapeaux pour les éviter.">
+    <title>Jeu du démineur</title>
+</head>
+<body>
+    
+<script>
+    let largeur = 9;
+    let hauteur = 9;
+    let nbMines = 10;
+    let matrice = []; 
+
+    /**
+     * Inialisation de la matrice du jeu 
+     **/
+    function initGame() {
+        for (let i = 0; i < hauteur; i++) {
+            let row = [];
+            for (let j = 0 ; j < largeur; j++) {
+                row.push(-1);
+            }
+            matrice.push(row); 
+        }
+        console.table(matrice)
+    }
+
+    /**
+     * Place les mines (position)
+     **/
+    function placeMines() {
+        let vecteur = []; 
+        let interval = largeur * hauteur; 
+
+        for (let i = 0; i < nbMines; i++) {
+            let positionMine = Math.floor(Math.random()*interval);
+            // si la position existe déjà 
+            while (vecteur.includes(positionMine)) {
+                positionMine = Math.floor(Math.random()*interval);
+            }
+            vecteur.push(positionMine); //10 positions
+        }
+        console.log(vecteur)
+    }
+
+    initGame()
+    placeMines()
+
+    // TO DO :  Afficher le jeu 
+    function displayGame() {
+
+    }
+
+
+    // détermine les cases dévoilées
+
+
+</script>
+
+</body>
+</html>
