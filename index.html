@@ -4,11 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Le Démineur (Minesweeper) est un jeu de réflexion dont le but est de localiser des mines cachées dans une grille représentant un champ de mines avec pour seule indication le nombre de mines dans les zones adjacentes. La règle du jeu est simple : le joueur sélectionne une case sur la grille, et cette case révèle un nombre qui indique le nombre de mines se trouvant dans les cases adjacentes. En utilisant ces informations, le joueur doit déduire l’emplacement des mines et les marquer avec des drapeaux pour les éviter.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <title>Jeu du démineur</title>
 </head>
+
 <body>
+    <div class="container">
+        <div class="title">
+            <h1>Jeu du Démineur</h1>
+        </div>
+
+        <div id="game">
+            <div id="grid"></div>
+        </div>
+    </div>
     
 <script>
+    const bombe = '💣'; 
+    const drapeau = '🚩'; 
     let largeur = 9;
     let hauteur = 9;
     let nbMines = 10;
@@ -25,37 +41,79 @@
             }
             matrice.push(row); 
         }
-        console.table(matrice)
+        //console.table(matrice)
     }
 
     /**
-     * Place les mines (position)
+     * Génèrer la position des mines aléatoirement 
+     * et les ajouter dans un tableau vecteur 
      **/
     function placeMines() {
-        let vecteur = []; 
-        let interval = largeur * hauteur; 
+        let vecteur = []; // tableau de 1 ligne * n colonnes ou n lignes * 1 colonne
+        let intervalle = largeur * hauteur; // aire 
 
         for (let i = 0; i < nbMines; i++) {
-            let positionMine = Math.floor(Math.random()*interval);
+            let positionMine = Math.floor(Math.random() * intervalle);
             // si la position existe déjà 
             while (vecteur.includes(positionMine)) {
-                positionMine = Math.floor(Math.random()*interval);
+                positionMine = Math.floor(Math.random() * intervalle);
             }
             vecteur.push(positionMine); //10 positions
+
+            let row = Math.floor(positionMine / largeur);
+            let col = positionMine % largeur;
+            console.log('positionMine:', positionMine, 'row:', row, 'col:', col); 
+            matrice[row][col] = -2;
         }
-        console.log(vecteur)
+        console.log(vecteur);
+        console.table(matrice);
     }
+
+    /**
+     *  Afficher la grille de jeu vide 
+     **/
+    function displayGame() {
+        let grid = document.getElementById('grid');
+        let table = document.createElement('table');
+        table.classList.add('minesweeper-grid');
+
+        for (let i = 0; i < hauteur; i++) {
+            let row = document.createElement('tr');
+            for (let j = 0; j < largeur; j++) {
+                let cell = document.createElement('td');
+                cell.classList.add('cell');
+                cell.setAttribute('data-row', i);
+                cell.setAttribute('data-col', j);
+                cell.textContent = '';
+
+                // Add event listener for left-click to reveal cell
+                cell.addEventListener('click', function() {
+                    let row = parseInt(cell.getAttribute('data-row'));
+                    let col = parseInt(cell.getAttribute('data-col'));
+                    if (matrice[row][col] === -2) {
+                        cell.textContent = bombe; 
+                    } else {
+                        cell.textContent = matrice[row][col] === -1 ? '' : matrice[row][col]; 
+                    }
+                });
+
+                row.append(cell);
+            }
+            table.append(row);
+        }
+    
+        grid.append(table);
+    }
+
 
     initGame()
     placeMines()
-
-    // TO DO :  Afficher le jeu 
-    function displayGame() {
-
-    }
+    displayGame()
 
 
-    // détermine les cases dévoilées
+
+
+    // détermine les cases voisines d'une bombe dévoilées // algorithme de fulfil
 
 
 </script>
