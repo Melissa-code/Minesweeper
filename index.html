@@ -1,122 +1,190 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Le Démineur (Minesweeper) est un jeu de réflexion dont le but est de localiser des mines cachées dans une grille représentant un champ de mines avec pour seule indication le nombre de mines dans les zones adjacentes. La règle du jeu est simple : le joueur sélectionne une case sur la grille, et cette case révèle un nombre qui indique le nombre de mines se trouvant dans les cases adjacentes. En utilisant ces informations, le joueur doit déduire l’emplacement des mines et les marquer avec des drapeaux pour les éviter.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <title>Jeu du démineur</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Le Démineur (Minesweeper) est un jeu de réflexion dont le but est de localiser des mines cachées dans une grille représentant un champ de mines avec pour seule indication le nombre de mines dans les zones adjacentes. La règle du jeu est simple : le joueur sélectionne une case sur la grille, et cette case révèle un nombre qui indique le nombre de mines se trouvant dans les cases adjacentes. En utilisant ces informations, le joueur doit déduire l’emplacement des mines et les marquer avec des drapeaux pour les éviter."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Jeu du Démineur</title>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <div class="title">
-            <h1>Jeu du Démineur</h1>
-        </div>
-
-        <div id="game">
-            <div id="grid"></div>
-        </div>
+      <div class="title">
+        <h1>Jeu du Démineur</h1>
+      </div>
+      <div id="game">
+        <div id="grid"></div>
+      </div>
     </div>
-    
-<script>
-    const bombe = '💣'; 
-    const drapeau = '🚩'; 
-    let largeur = 9;
-    let hauteur = 9;
-    let nbMines = 10;
-    let matrice = []; 
 
-    /**
-     * Inialisation de la matrice du jeu 
-     **/
-    function initGame() {
+    <script>
+      const bombe = "💣";
+      const drapeau = "🚩";
+      let largeur = 9;
+      let hauteur = 9;
+      let nbMines = 10;
+      let matrice = [];
+      let vecteurMines = []; // tableau de 1 ligne * n colonnes ou n lignes * 1 colonne
+
+      /**
+       * Inialisation de la matrice du jeu
+       **/
+      function initGame() {
         for (let i = 0; i < hauteur; i++) {
-            let row = [];
-            for (let j = 0 ; j < largeur; j++) {
-                row.push(-1);
-            }
-            matrice.push(row); 
+          let row = [];
+          for (let j = 0; j < largeur; j++) {
+            row.push(-1);
+          }
+          matrice.push(row);
         }
-        //console.table(matrice)
-    }
+        console.table(matrice);
+      }
 
-    /**
-     * Génèrer la position des mines aléatoirement 
-     * et les ajouter dans un tableau vecteur 
-     **/
-    function placeMines() {
-        let vecteur = []; // tableau de 1 ligne * n colonnes ou n lignes * 1 colonne
-        let intervalle = largeur * hauteur; // aire 
+      /**
+       * Génèrer la position des mines aléatoirement
+       * et les ajouter dans un tableau vecteur
+       **/
+      function placeMines() {
+        let intervalle = largeur * hauteur; // aire
 
         for (let i = 0; i < nbMines; i++) {
-            let positionMine = Math.floor(Math.random() * intervalle);
-            // si la position existe déjà 
-            while (vecteur.includes(positionMine)) {
-                positionMine = Math.floor(Math.random() * intervalle);
-            }
-            vecteur.push(positionMine); //10 positions
+          let positionMine = Math.floor(Math.random() * intervalle);
+          // si la position existe déjà
+          while (vecteurMines.includes(positionMine)) {
+            positionMine = Math.floor(Math.random() * intervalle);
+          }
+          vecteurMines.push(positionMine); //10 positions
 
-            let row = Math.floor(positionMine / largeur);
-            let col = positionMine % largeur;
-            console.log('positionMine:', positionMine, 'row:', row, 'col:', col); 
-            matrice[row][col] = -2;
+          let row = Math.floor(positionMine / largeur);
+          let col = positionMine % largeur;
+          //console.log("positionMine:", positionMine, "row:", row, "col:", col);
         }
-        console.log(vecteur);
-        console.table(matrice);
-    }
+        console.log(vecteurMines);
+        // pour tester
+        matrice[0][0] = 0;
+        matrice[0][1] = 1;
+        matrice[0][2] = 2;
+        matrice[0][3] = 3;
+      }
 
-    /**
-     *  Afficher la grille de jeu vide 
-     **/
-    function displayGame() {
-        let grid = document.getElementById('grid');
-        let table = document.createElement('table');
-        table.classList.add('minesweeper-grid');
+      /**
+       *  Créer la grille de jeu
+       **/
+      function createGrid() {
+        let grid = document.getElementById("grid");
+        let table = document.createElement("table");
+        table.classList.add("minesweeper-grid");
 
         for (let i = 0; i < hauteur; i++) {
-            let row = document.createElement('tr');
-            for (let j = 0; j < largeur; j++) {
-                let cell = document.createElement('td');
-                cell.classList.add('cell');
-                cell.setAttribute('data-row', i);
-                cell.setAttribute('data-col', j);
-                cell.textContent = '';
+          let row = document.createElement("tr");
+          for (let j = 0; j < largeur; j++) {
+            let cell = document.createElement("td");
+            cell.classList.add("cell_cachee");
+            cell.id = i + "-" + j;
+            cell.textContent = "";
 
-                // Add event listener for left-click to reveal cell
-                cell.addEventListener('click', function() {
-                    let row = parseInt(cell.getAttribute('data-row'));
-                    let col = parseInt(cell.getAttribute('data-col'));
-                    if (matrice[row][col] === -2) {
-                        cell.textContent = bombe; 
-                    } else {
-                        cell.textContent = matrice[row][col] === -1 ? '' : matrice[row][col]; 
-                    }
-                });
+            // Event play : left click on a cell
+            cell.addEventListener("click", () => {
+              jouer(i, j);
+            });
 
-                row.append(cell);
-            }
-            table.append(row);
+            // Event flag : right click on a cell
+            cell.addEventListener("contextmenu", (event) => {
+              afficheDrapeau(event);
+            });
+
+            row.append(cell);
+          }
+          table.append(row);
         }
-    
         grid.append(table);
-    }
+      }
 
+      /**
+       *
+       **/
+      function jouer(i, j) {
+        console.log("Click sur la case i et j :" + i, j);
+        displayGrid();
+      }
 
-    initGame()
-    placeMines()
-    displayGame()
+      /**
+       *  Effacer le style des cellules
+       **/
+      function effacerStyle(elem) {
+        elem.classList.forEach((style_) => {
+          elem.classList.remove(style_);
+        });
+      }
 
+      /**
+       * Affiche un drapeau ou retire un drapeau
+       **/
+      function afficheDrapeau(event) {
+        event.preventDefault();
+        const cell = event.target; // cell (td)
+        if (cell.classList.contains("cell_devoilee")) {
+          return; //impossible
+        }
+        if (cell.classList.contains("cell_drapeau")) {
+          cell.classList.remove("cell_drapeau"); //retire
+          cell.textContent = "";
+        } else {
+          cell.classList.add("cell_drapeau"); //ajoute
+          cell.textContent = drapeau;
+        }
+      }
 
+      /**
+       *  Affiche la grille de jeu
+       **/
+      function displayGrid() {
+        for (let i = 0; i < hauteur; i++) {
+          for (let j = 0; j < largeur; j++) {
+            let cell = document.getElementById(i + "-" + j);
+            effacerStyle(cell);
 
+            if (matrice[i][j] < 0) {
+              cell.classList.add("cell_cachee");
+              if (matrice[i][j] === -3) {
+                // placer drapeau
+              }
+            } else {
+              cell.classList.add("cell_devoilee");
+              // 1 => 'couleur1'
+              // 2 => 'couleur2'
+              // 3 => 'couleur3'
+              // 'case'+matrice[i][j]
+              if (matrice[i][j] > 0) {
+                cell.textContent = matrice[i][j];
+                cell.classList.add("couleur" + matrice[i][j]);
+              }
+            }
+          }
+        }
+      }
 
-    // détermine les cases voisines d'une bombe dévoilées // algorithme de fulfil
+      // clic droit: ajouter drapeau
+      // clic mine : on perd: toutes les bombes sont dévoilées dans la console
+      // tester s'il a gagné : dévoile toutes les cases sans mines qui sont sous drapeaux
 
+      // algo récursif dévoiler cases
 
-</script>
+      initGame();
+      placeMines();
+      createGrid();
 
-</body>
+      // détermine les cases voisines d'une bombe dévoilées // algorithme de fulfil
+    </script>
+  </body>
 </html>
