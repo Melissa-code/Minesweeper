@@ -7,6 +7,8 @@
       name="description"
       content="Le Démineur (Minesweeper) est un jeu de réflexion dont le but est de localiser des mines cachées dans une grille représentant un champ de mines avec pour seule indication le nombre de mines dans les zones adjacentes. La règle du jeu est simple : le joueur sélectionne une case sur la grille, et cette case révèle un nombre qui indique le nombre de mines se trouvant dans les cases adjacentes. En utilisant ces informations, le joueur doit déduire l’emplacement des mines et les marquer avec des drapeaux pour les éviter."
     />
+    <link rel="icon" type="image/png" href="./images/bomb-48.png" />
+    <link rel="icon" type="image/png" href="./images/bomb-96.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -54,7 +56,7 @@
        * Génèrer la position des mines aléatoirement
        * et les ajouter dans un tableau vecteur
        **/
-      function placeMines() {
+      function createVecteurMines() {
         let intervalle = largeur * hauteur; // aire
 
         for (let i = 0; i < nbMines; i++) {
@@ -111,11 +113,33 @@
       }
 
       /**
-       *
+       * Jouer : clic gauche sur une case
        **/
       function jouer(i, j) {
         console.log("Click sur la case i et j :" + i, j);
+        // ex: largeur = 9, i = 2,j = 3 => position= 2 × 9 + 3 =21
+        // grille bidimensionnelle en tableau  unidimensionnel
+        let position = i * largeur + j; 
+        if (vecteurMines.includes(position)) {
+          console.log("Mine trouvée! Partie perdue.");
+          afficherToutesLesMines();
+          return;
+        }
+
         displayGrid();
+      }
+
+      /**
+       * Affiche toutes les mines 
+       **/
+      function afficherToutesLesMines() {
+        console.log("Positions des mines :");
+        for (let mine of vecteurMines) {
+          let row = Math.floor(mine / largeur); /// Mine a une position
+          let col = mine % largeur;
+          console.log("Mine à :", row, col);
+          document.getElementById(row + "-" + col).textContent = bombe; 
+        }
       }
 
       /**
@@ -181,7 +205,7 @@
       // algo récursif dévoiler cases
 
       initGame();
-      placeMines();
+      createVecteurMines();
       createGrid();
 
       // détermine les cases voisines d'une bombe dévoilées // algorithme de fulfil
