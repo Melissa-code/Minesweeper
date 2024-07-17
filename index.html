@@ -34,10 +34,9 @@
       const drapeau = "🚩";
       let largeur = 9;
       let hauteur = 9;
-      //let nbMines = 10;
-      let nbMines = 2;
-      let matrice = [];
-      let vecteurMines = []; // tableau de 1 ligne * n colonnes ou n lignes * 1 colonne
+      let nbMines = 10;
+      let matrice = []; // 0,1,2,3,4,5,6,7,-1 (bombes)
+      let masque = []; //  1 (voile), 0 (afficher), -1 (drapeau)
       let nbDrapeaux = 0;
 
       /**
@@ -46,42 +45,37 @@
       function initGame() {
         for (let i = 0; i < hauteur; i++) {
           let row = [];
+          let row1 = [];
           for (let j = 0; j < largeur; j++) {
-            row.push(-1);
+            row.push(1);
+            row1.push(1);
           }
-          matrice.push(row);
+          masque.push(row);
+          matrice.push(row1);
         }
-        console.table(matrice);
+        //console.table(matrice);
       }
 
       /**
        * Génèrer la position des mines aléatoirement
-       * et les ajouter dans un tableau vecteur
+       *
        **/
-      function createVecteurMines() {
+      function placerMines() {
         let intervalle = largeur * hauteur; // aire
-
-        /*
         for (let i = 0; i < nbMines; i++) {
-          let positionMine = Math.floor(Math.random() * intervalle);
-          // si la position existe déjà
-          while (vecteurMines.includes(positionMine)) {
+          let positionMine;
+          let row, col;
+          do {
+            //choisit une nouvelle position si case est deja -1
             positionMine = Math.floor(Math.random() * intervalle);
-          }
-          vecteurMines.push(positionMine); //10 positions
+            row = Math.floor(positionMine / largeur);
+            col = positionMine % largeur;
+          } while (matrice[row][col] == -1);
 
-          //let row = Math.floor(positionMine / largeur);
-          //let col = positionMine % largeur;
-          //console.log("positionMine:", positionMine, "row:", row, "col:", col);
-        }*/
-        // for test
-        vecteurMines.push(7, 8);
-        console.log(vecteurMines);
-        // pour tester
-        matrice[0][0] = 0;
-        matrice[0][1] = 1;
-        matrice[0][2] = 2;
-        matrice[0][3] = 3;
+          // place la mine dans la matrice (case -1)
+          matrice[row][col] = -1;
+        }
+        console.log("Mines placed:", matrice);
       }
 
       /**
@@ -123,7 +117,7 @@
       function jouer(i, j) {
         console.log("Click sur la case i et j :" + i, j);
         // ex: largeur = 9, i = 2,j = 3 => position= 2 × 9 + 3 =21
-        // grille bidimensionnelle en tableau  unidimensionnel
+        // grille bidimensionnelle en tableau unidimensionnel
         let position = i * largeur + j;
         if (vecteurMines.includes(position)) {
           console.log("Mine trouvée! Partie perdue.");
@@ -140,7 +134,7 @@
       function afficherToutesLesMines() {
         console.log("Positions des mines :");
         for (let mine of vecteurMines) {
-          let row = Math.floor(mine / largeur); /// Mine a une position
+          let row = Math.floor(mine / largeur); // Mine a une position
           let col = mine % largeur;
           console.log("Mine à :", row, col);
           document.getElementById(row + "-" + col).textContent = bombe;
@@ -177,6 +171,21 @@
       }
 
       /**
+       * Return tableau des cases adjacentes aux bombes
+       **/
+      function voisinages_lineaires(i, j) {
+        let voisinages = [];
+        for (let ii = i - 1; ii <= i + 1; ii++)
+          for (let jj = j - 1; jj <= j + 1; jj++) {
+            if (ii < 0 || ii >= hauteur || jj < 0 || jj >= largeur) continue;
+            if ((ii == i) & (jj == j)) continue;
+            voisinages.push(ii * largeur + jj);
+          }
+        //console.log(voisinages)
+        return voisinages;
+      }
+
+      /**
        * vérifie s'il y a un gagnant
        **/
       function verifierGagnant() {
@@ -204,15 +213,15 @@
       }
 
       function devoilerCasesSansMines() {
-        console.log('ici')
+        console.log("ici");
         for (let i = 0; i < hauteur; i++) {
           for (let j = 0; j < largeur; j++) {
             let position = i * largeur + j;
             //console.log("position" + position )
             if (!vecteurMines.includes(position)) {
               let cell = document.getElementById(i + "-" + j);
-             //console.log(cell)
-             // if cell existe et a cell_drapeau
+              //console.log(cell)
+              // if cell existe et a cell_drapeau
               if (cell && cell.classList.contains("cell_drapeau")) {
                 // check si la case contient un drapeau
                 //cell.classList.remove("cell_drapeau");
@@ -234,7 +243,7 @@
             let cell = document.getElementById(i + "-" + j);
             effacerStyle(cell);
 
-            if (matrice[i][j] < 0) {
+            if (false) {
               cell.classList.add("cell_cachee");
               if (matrice[i][j] === -3) {
                 // placer drapeau
@@ -245,10 +254,10 @@
               // 2 => 'couleur2'
               // 3 => 'couleur3'
               // 'case'+matrice[i][j]
-              if (matrice[i][j] > 0) {
-                cell.textContent = matrice[i][j];
+
+              cell.textContent = matrice[i][j];
+              if (matrice[i][j] > 0)
                 cell.classList.add("couleur" + matrice[i][j]);
-              }
             }
           }
         }
@@ -262,12 +271,40 @@
       - check si les drapeaux sont sur des mines
       - check si toutes les cellules sans mines sont dévoilées
       */
-
       // algo récursif dévoiler cases
 
+      /**
+       *
+       **/
+      function remplir_chiffres() {
+        for (i = 0; i < matrice.length; i++)
+          for (let j = 0; j < matrice[i].length; j++) {
+            // Vérifie si la case a une bombe -1
+            if (matrice[i][j] == -1) {
+              //console.log(matrice[i][j]);
+              continue;
+            } else {
+              let vecteurVoisinage = voisinages_lineaires(i, j);
+              let counterMines = 0;
+              for (let k = 0; k < vecteurVoisinage.length; k++) {
+                let row = Math.floor(vecteurVoisinage[k] / largeur);
+                let col = vecteurVoisinage[k] % largeur;
+                if (matrice[row][col] == -1) {
+                  counterMines++;
+                }
+              }
+              console.log(`Mines around (${i}, ${j}): ${counterMines}`);
+              matrice[i][j] = counterMines;
+            }
+          }
+      }
+
       initGame();
-      createVecteurMines();
+      placerMines();
+      remplir_chiffres();
       createGrid();
+      displayGrid();
+      console.table(matrice);
 
       // détermine les cases voisines d'une bombe dévoilées // algorithme de fulfil
     </script>
