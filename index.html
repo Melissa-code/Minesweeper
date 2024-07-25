@@ -53,11 +53,13 @@
           masque.push(row);
           matrice.push(row1);
         }
-        //console.table(matrice);
+        // console.table(matrice);
+        // console.table(masque);
       }
 
       /**
        * Génèrer la position des mines aléatoirement
+       * dans la matrice
        *
        **/
       function placerMines() {
@@ -116,19 +118,14 @@
        **/
       function jouer(i, j) {
         console.log("Click sur la case i et j :" + i, j);
-        // ex: largeur = 9, i = 2,j = 3 => position= 2 × 9 + 3 =21
-        // grille bidimensionnelle en tableau unidimensionnel
         if (masque[i][j] != 1) {
-          //drapeau
-          return;
+          return;  //drapeau ou deja devoilée
         }
         if (matrice[i][j] == -1) {
           console.log("Mine trouvée! Partie perdue.");
           devoilerToutesLesMines();
-          
-        } 
-        else {
-          devoilerVoisinage(i, j); 
+        } else {
+          devoilerVoisinage(i, j);
         }
 
         displayGrid();
@@ -142,8 +139,7 @@
 
         for (let i = 0; i < hauteur; i++) {
           for (let j = 0; j < largeur; j++) {
-
-            // devoiler bomb sans drap
+            // devoiler mines sans drapeau
             if (matrice[i][j] == -1 && masque[i][j] != -1) {
               masque[i][j] = 0;
             }
@@ -152,7 +148,24 @@
       }
 
       function devoilerVoisinage(i, j) {
-        masque[i][j] = 0; 
+        masque[i][j] = 0;
+        if (matrice[i][j] != 0) {
+          return;
+        } else {
+          // get voisinage
+          let casesVoisines = voisinages_lineaires(i, j);
+          console.log("traitement :", i, j);
+          console.log(casesVoisines);
+          // dévoile les cases de voisinage
+          // à l'exception de si la case est deja dévoilée
+          // si il y a une mine ou un drapeau
+          for (let k = 0; k < casesVoisines.length; k++) {
+            let i1 = Math.trunc(casesVoisines[k] / largeur);
+            let j1 = casesVoisines[k] % largeur;
+            if (masque[i1][j1] == 1 && matrice[i1][j1] != -1)
+              devoilerVoisinage(i1, j1);
+          }
+        }
       }
 
       /**
@@ -263,15 +276,14 @@
                 break;
               case 0:
                 cell.classList.add("cell_devoilee");
-              
+
                 if (matrice[i][j] > 0) {
                   cell.textContent = matrice[i][j];
                   cell.classList.add("couleur" + matrice[i][j]);
                 }
-                if (matrice[i][j]==-1)
-                {
+                if (matrice[i][j] == -1) {
                   cell.textContent = bombe;
-                } 
+                }
                 break;
               case -1:
                 cell.classList.add("cell_drapeau");
@@ -280,16 +292,6 @@
           }
         }
       }
-
-      // clic droit: ajouter drapeau
-      // clic mine : on perd: toutes les bombes sont dévoilées dans la console
-      // tester s'il a gagné : dévoile toutes les cases sans mines qui sont sous drapeaux
-      /*
-      - Compter les drapeaux dans la grille ($counter?)
-      - check si les drapeaux sont sur des mines
-      - check si toutes les cellules sans mines sont dévoilées
-      */
-      // algo récursif dévoiler cases
 
       /**
        *
@@ -311,7 +313,7 @@
                   counterMines++;
                 }
               }
-              console.log(`Mines around (${i}, ${j}): ${counterMines}`);
+              //console.log(`Mines around (${i}, ${j}): ${counterMines}`);
               matrice[i][j] = counterMines;
             }
           }
@@ -325,7 +327,10 @@
       console.table(matrice);
 
       // détermine les cases voisines d'une case vide (récursif) attention à ne pas inspecter à nv
-      // algorithme de floodfill
+      // algorithme de floodfill Algorithme de remplissage par diffusion
+      // un pixel point de départ - couleur - couleur changée
+      // remplacer la couleur du pixel donné et de tous les pixels adjacents de même couleur avec la couleur donnée.
+      //
     </script>
   </body>
 </html>
