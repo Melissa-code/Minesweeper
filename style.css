@@ -68,4 +68,60 @@ h1 {
     color: #c20114;
 }
 
+/* .alertMsg {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #c20114;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  } */
+  .alertMsg {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
 
+.gagnant {
+    background-color: #20bf55;
+}
+
+.perdant {
+    background-color: #c20114; 
+}
+
+#reset-btn {
+background-color: #ef8354 ;
+color: white;
+padding: 10px 20px;
+border: 1px solid white;
+border-radius: 5px;
+display: flex;
+justify-content: center;
+margin: auto;
+font-size: 1rem;
+cursor: pointer;
+}
+
+#reset-btn:hover {
+    background-color: #f36316; 
+}
