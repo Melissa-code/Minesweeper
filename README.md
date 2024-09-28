@@ -11,21 +11,20 @@ Grille de Jeu:
 
 2. Le jeu se joue sur une grille composée de cellules. Chaque cellule peut contenir soit une mine, soit un chiffre indiquant combien de mines se trouvent dans les cellules adjacentes (voisines).
 
-Types de Cases:
+* Types de Cases:
 
-Case Vide: Ne contient aucune mine adjacente, et toutes les cases voisines sont dévoilées automatiquement.
+- Case Vide: Ne contient aucune mine adjacente, et toutes les cases voisines sont dévoilées automatiquement.
 
-Case Chiffrée: Contient un chiffre de 1 à 8 qui indique le nombre de mines adjacentes.
+- Case Chiffrée: Contient un chiffre de 1 à 8 qui indique le nombre de mines adjacentes.
 
-Case Mine: Une case qui contient une mine. Si elle est cliquée, le joueur perd la partie.
+- Case Mine: Une case qui contient une mine. Si elle est cliquée, le joueur perd la partie.
 
-Case Drapeau: Le joueur peut marquer une case comme suspecte (potentiellement une mine) en plaçant un drapeau dessus.
+- Case Drapeau: Le joueur peut marquer une case comme suspecte (potentiellement une mine) en plaçant un drapeau dessus.
 
 
-3. Cliquer (Gauche): Révèle la case. Si c'est une mine, la partie se termine. Si c'est vide, les cases adjacentes sont révélées.
+3. Clic Gauche: Révèle la case. Si c'est une mine, la partie se termine. Si c'est vide, les cases adjacentes sont révélées.
 
 4. Clic Droit: Place ou enlève un drapeau sur une case pour signaler une mine présumée.
-Victoire:
 
 5. Le joueur gagne en révélant toutes les cases qui ne contiennent pas de mines. Cela peut impliquer le placement correct de drapeaux sur toutes les mines.
 
