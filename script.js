@@ -1,8 +1,8 @@
 const bombe = "💣";
 const drapeau = "🚩";
-let largeur = 3;
-let hauteur = 3;
-let nbMines = 2;
+let largeur = 9;
+let hauteur = 9;
+let nbMines = 10;
 let matrice = []; // 0,1,2,3,4,5,6,7,(-1 bombes)
 let masque = []; //  1 (voile), 0 (afficher), -1 (drapeau)
 let nbDrapeaux = 0;
@@ -410,7 +410,7 @@ placerMines();
 remplir_chiffres();
 createGrid();
 displayGrid();
-console.table(matrice);
+//console.table(matrice);
 
 
 
